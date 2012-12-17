@@ -17,15 +17,22 @@ typedef enum _ASIOAuthSignatureMethod2 {
 
 @interface TumblrUploadr : NSObject {
     NSURL *url;
-    id <TumblrUploadrDelegate> delegate;
+    __unsafe_unretained id id <TumblrUploadrDelegate> delegate;
     NSMutableArray *params;
     NSMutableData *responseData;
     NSString *blogName;
     NSArray *photoDataArray;
     NSMutableURLRequest *request;
     NSString *caption;
+    NSURLConnection *connection;
 }
 
+- (id)initWithConsumerKey:(NSString *)consumerKey
+           consumerSecret:(NSString *)consumerSecret
+                   photos:(NSArray *)aPhotoDataArray
+                 blogName:(NSString *)aBlogName
+                  caption:(NSString *)aCaption
+				 delegate:(id)aDelegate;
 
 - (void) signAndSendWithTokenKey:(NSString *)key andSecret:(NSString *)secret;
 

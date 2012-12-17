@@ -32,8 +32,21 @@ static const NSString *oauthVersion = @"1.0";
 @synthesize url, delegate, params,responseData, blogName, photoDataArray, request, caption;
 
 - (id)initWithNSDataForPhotos:(NSArray *)aPhotoDataArray andBlogName:(NSString *)aBlogName andDelegate:(id)aDelegate {
-    [self initWithNSDataForPhotos:aPhotoDataArray andBlogName:aBlogName andDelegate:aDelegate andCaption:nil];
+    self = [self initWithNSDataForPhotos:aPhotoDataArray andBlogName:aBlogName andDelegate:aDelegate andCaption:nil];
     return self;
+}
+
+- (id)initWithConsumerKey:(NSString *)consumerKey
+           consumerSecret:(NSString *)consumerSecret
+                   photos:(NSArray *)aPhotoDataArray
+                 blogName:(NSString *)aBlogName
+                  caption:(NSString *)aCaption
+                 delegate:(id)aDelegate
+{
+	tumblrConsumerKey = consumerKey;
+	tumblrConsumerSecret = consumerSecret;
+	
+	return [self initWithNSDataForPhotos:aPhotoDataArray andBlogName:aBlogName andDelegate:aDelegate andCaption:aCaption];
 }
 
 - (id)initWithNSDataForPhotos:(NSArray *)aPhotoDataArray andBlogName:(NSString *)aBlogName andDelegate:(id)aDelegate andCaption:(NSString *)aCaption {
@@ -52,7 +65,7 @@ static const NSString *oauthVersion = @"1.0";
         NSMutableArray *someParams = [NSMutableArray arrayWithCapacity:[photoDataArray count]+1];
         [self setParams:someParams];
         for (NSData *photoData in photoDataArray) {
-            NSString *thisKey = [NSString stringWithFormat:@"data%%5B%d%%5D",[photoDataArray indexOfObject:photoData]];
+            NSString *thisKey = [NSString stringWithFormat:@"data%%5B%ld%%5D",[photoDataArray indexOfObject:photoData]];
             //NSLog(@"this key:%@",thisKey );
             [params addObject:[NSDictionary dictionaryWithObjectsAndKeys:thisKey, @"key", [photoData stringWithoutURLEncoding], @"value", nil]];
         }
@@ -71,7 +84,7 @@ static const NSString *oauthVersion = @"1.0";
 
 - (void) signAndSendWithTokenKey:(NSString *)key andSecret:(NSString *)secret {
     [self signRequestWithClientIdentifier:tumblrConsumerKey secret:tumblrConsumerSecret tokenIdentifier:key secret:secret usingMethod:ASIOAuthHMAC_SHA1SignatureMethod2];
-	[[NSURLConnection alloc] initWithRequest:request delegate:self];    
+	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
 
 
@@ -122,7 +135,7 @@ static const NSString *oauthVersion = @"1.0";
         
         // Generate a random alphanumeric character sequence for the nonce
         char nonceBytes[16];
-        srandom(tv.tv_sec | tv.tv_usec);
+        srandom((uint)tv.tv_sec | (uint)tv.tv_usec);
         for (int i = 0; i < 16; i++) {
             int byte = random() % 62;
             if (byte < 26)
@@ -133,7 +146,7 @@ static const NSString *oauthVersion = @"1.0";
                 nonceBytes[i] = '0' + byte - 52;
         }
         
-        timestamp = [NSString stringWithFormat:@"%d", tv.tv_sec];
+        timestamp = [NSString stringWithFormat:@"%ld", tv.tv_sec];
         nonce = [NSString stringWithFormat:@"%.16s", nonceBytes];
     } while ((tv.tv_sec == last_timestamp) && [nonceHistory containsObject:nonce]);
     
