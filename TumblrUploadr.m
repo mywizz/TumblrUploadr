@@ -97,7 +97,6 @@ static const NSString *oauthVersion = @"1.0";
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [connection release];
     [delegate tumblrUploadr:self didFailWithError:error];
     self.request = nil;
     self.responseData = nil;
@@ -105,10 +104,8 @@ static const NSString *oauthVersion = @"1.0";
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-	[connection release];
     NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
     [delegate tumblrUploadrDidSucceed:self withResponse:responseString];
-	[responseString release];
     self.request = nil;
     self.responseData = nil;
     self.photoDataArray = nil;
@@ -347,14 +344,7 @@ static const NSString *oauthVersion = @"1.0";
 
 
 - (void) dealloc {
-    [url release];
-    [params release];
-    [responseData release];
-    [blogName release];
-    [photoDataArray release];
-    [request release];
-    [caption release];
-    [super dealloc];
+
 }
 
 @end

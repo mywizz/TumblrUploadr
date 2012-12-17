@@ -17,7 +17,7 @@ typedef enum _ASIOAuthSignatureMethod2 {
 
 @interface TumblrUploadr : NSObject {
     NSURL *url;
-    __unsafe_unretained id id <TumblrUploadrDelegate> delegate;
+    __unsafe_unretained id <TumblrUploadrDelegate> delegate;
     NSMutableArray *params;
     NSMutableData *responseData;
     NSString *blogName;
