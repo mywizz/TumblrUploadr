@@ -33,7 +33,7 @@
     NSString *newString = [self stringWithoutURLEncoding];
     newString = [newString stringByReplacingOccurrencesOfString:@"+" withString:@"%20"];
     const CFStringRef legalURLCharactersToBeEscaped = CFSTR("!*'();:@&=+$,/?#[]<>\"{}|\\`^% ");    
-    NSString *urlEncodedString = [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)newString, NULL, legalURLCharactersToBeEscaped, kCFStringEncodingUTF8)) autorelease];
+    NSString *urlEncodedString = (__bridge NSString *)(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)newString, NULL, legalURLCharactersToBeEscaped, kCFStringEncodingUTF8));
     
     return urlEncodedString;
     
